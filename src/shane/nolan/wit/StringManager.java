@@ -1,19 +1,19 @@
 package shane.nolan.wit;
 
 import java.text.ParseException;
-
+import java.text.SimpleDateFormat;
 
 public class StringManager {
 	
 	public StringManager(){}
 	
-		/**
+	/**
 	 * Given a string, return the same string but without the vowels
 	 * @param str
 	 * @return
 	 */
 	public String removeVowels(String str){
-		return null;
+		return str.replaceAll("[aeiouAEIOU]", "");
 	}
 	
 	/**
@@ -22,7 +22,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String removeConsonants(String str){
-		return null;
+		return str.replaceAll("[^aeiouAEIOU]", "");
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class StringManager {
 	 * @return
 	 */
 	public char getFirstCharacter(String str){		
-		return '#';
+		return str.charAt(0);
 	}
 	
 	/**
@@ -40,7 +40,7 @@ public class StringManager {
 	 * @return
 	 */
 	public char getLastCharacter(String str){
-		return '#';
+		return str.charAt(str.length()-1);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean containsNumbers(String str){
-		return false;
+		return str.matches("^.+?[0-9].+$");
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String removeNumbers(String str){
-		return null;
+		return str.replaceAll("[0-9]","");
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class StringManager {
 	 * @return
 	 */
 	public int countCharacters(String str){
-		return -1;
+		return str.length();
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String reverseString(String str){
-		return null;
+		return new StringBuilder(str).reverse().toString();
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean isPalindrome(String str){
-		return false;
+		return str.equals(reverseString(str));
 	}	
 	
 	/**
@@ -96,7 +96,11 @@ public class StringManager {
 	 * @return
 	 */
 	public String[] duplicate(String str, int numberOfDuplicates){
-		return null;
+		String[] duplicates = new String[numberOfDuplicates];
+		for(int i = 0; i < numberOfDuplicates; i++){
+			duplicates[i] = str;
+		}
+		return duplicates;
 	}
 	
 	/**
@@ -107,7 +111,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean stringsAreEqual(String a, String b){
-		return false;
+		return a.equalsIgnoreCase(b);
 	}
 	
 	/**
@@ -118,7 +122,15 @@ public class StringManager {
 	 * @return
 	 */
 	public int countStartsWith(String sentence, String s, boolean caseSensitive){
-		return 0;
+		int count = 0;
+		String[] words = sentence.split(" ");
+		for(int i=0; i<words.length; i++){
+			boolean match = (caseSensitive) ? words[i].startsWith(s) : words[i].toLowerCase().startsWith(s.toLowerCase());
+			if(match){
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	/**
@@ -129,7 +141,15 @@ public class StringManager {
 	 * @return
 	 */
 	public int countEndsWith(String sentence, String s, boolean caseSensitive){
-		return 0;
+		int count = 0;
+		String[] words = sentence.split(" ");
+		for(int i=0; i<words.length; i++){
+			boolean match = (caseSensitive) ? words[i].endsWith(s) : words[i].toLowerCase().endsWith(s.toLowerCase());
+			if(match){
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	/**
@@ -139,7 +159,12 @@ public class StringManager {
 	 * @return
 	 */
 	public int addLetterValues(String str){
-		return 0;
+		String[] strArr = str.split("");
+		int total = 0;
+		for(int i=0; i< strArr.length; i++){
+			total += Integer.parseInt(strArr[i]);
+		}
+		return total;
 	}
 	
 	
@@ -154,7 +179,9 @@ public class StringManager {
 	 * @throws ParseException
 	 */
 	public String reformatDateString(String dateString) throws ParseException {
-		return null;
+		return new SimpleDateFormat("dd-MM-yyyy h:mm a")
+				.format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.parse(dateString));
 	}
 
 }
