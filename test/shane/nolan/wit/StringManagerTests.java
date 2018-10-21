@@ -2,6 +2,8 @@ package shane.nolan.wit;
 
 import static org.junit.Assert.*;
 
+import java.text.ParseException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,6 +120,36 @@ public class StringManagerTests {
 	@Test
 	public void testStringsAreEqual() {
 		assertTrue(getStringManager().stringsAreEqual("hellO", "hELLo"));
+	}
+	
+	@Test
+	public void testCountStartsWith(){
+		assertEquals(2, getStringManager().countStartsWith("apple banana Pear ant zebra Algebra maximum", "a", true));
+		assertEquals(1, getStringManager().countStartsWith("apple banana Pear ant zebra Algebra maximum", "A", true));
+		assertEquals(3, getStringManager().countStartsWith("apple banana Pear ant zebra Algebra maximum", "a", false));
+		assertEquals(1, getStringManager().countStartsWith("aPple banana Pear ant zebra Algebra maximum", "ap", false));
+	}
+	
+	@Test
+	public void testCountEndsWith(){
+		assertEquals(4, getStringManager().countEndsWith("zebra horse algebra maximum santa ManTRa", "a", true));
+		assertEquals(2, getStringManager().countEndsWith("zebra horse algebra maximum santa ManTRa", "ra", true));
+		assertEquals(3, getStringManager().countEndsWith("zebra horse algebra maximum santa ManTRa", "ra", false));	
+	}
+	
+	@Test
+	public void testAddLetterValues() {
+		assertEquals(12,getStringManager().addLetterValues("453"));
+		assertEquals(10,getStringManager().addLetterValues("91"));
+		assertEquals(4,getStringManager().addLetterValues("4"));
+		assertEquals(15,getStringManager().addLetterValues("48000000111"));
+	}
+	
+	@Test
+	public void testReformatDateString() throws ParseException{		
+		assertEquals("19-01-2018 6:05 PM",getStringManager().reformatDateString("2018-01-19 18:05:00"));
+		assertEquals("19-09-2009 11:11 PM",getStringManager().reformatDateString("2009-09-19 23:11:08"));
+		assertEquals("25-12-1999 12:01 AM",getStringManager().reformatDateString("1999-12-25 00:01:30"));
 	}
 
 }
