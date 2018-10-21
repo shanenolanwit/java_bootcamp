@@ -6,7 +6,7 @@ The **master** branch has all the tests in place but none of the code required t
 
 The **one-line** branch is a more experimental approach to the exercises where an attempt has been made to solve each problem using a single line of code (ternarys, streams, recursion allowed and encouraged)
 
-The **clean** branch is a more structure approach that focuses on more clean, succient and efficient solutions.
+The **clean** branch is a more structured approach that focuses on more clean, succinct and efficient solutions.
 
 There are two approaches for running the tests
 * import the project into your ide, add the junit library and run the tests as junit tests
