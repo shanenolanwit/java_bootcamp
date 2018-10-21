@@ -1,8 +1,13 @@
 package shane.nolan.wit;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class CollectionManager {
@@ -16,7 +21,10 @@ public class CollectionManager {
 	 * @return
 	 */
 	public int countShortStrings(List<String> strings, int length){
-		return -1;
+		return new Long(strings.stream()
+						.filter(str -> str.length() < length)
+						.count())
+					.intValue();
 	}
 	
 	/**
@@ -26,7 +34,10 @@ public class CollectionManager {
 	 * @return
 	 */
 	public int countLongStrings(List<String> strings, int length){
-		return -1;
+		return new Long(strings.stream()
+							.filter(str -> str.length() > length)
+							.count())
+					.intValue();
 	}
 	
 	/**
@@ -36,7 +47,9 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> removeShortStrings(List<String> strings, int length){
-		return null;
+		return strings.stream()
+				.filter(str -> str.length() >= length)
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -46,7 +59,9 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> removeLongStrings(List<String> strings, int length){
-		return null;
+		return strings.stream()
+				.filter(str -> str.length() <= length)
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -56,7 +71,8 @@ public class CollectionManager {
 	 * @return
 	 */
 	public Map<String,Integer> mapStringToStringLength(List<String> strings){		
-		return null;
+		return strings.stream()				
+				.collect(Collectors.toMap(str -> str, str -> str.length()));
 	}
 	
 	/**
@@ -66,7 +82,8 @@ public class CollectionManager {
 	 * @return
 	 */
 	public Map<Integer,List<String>> mapLengthToMatchingStrings(List<String> strings){
-		return null;
+		return strings.stream()
+				.collect(Collectors.groupingBy(str -> str.length()));
 	}
 	
 	/**
@@ -75,7 +92,11 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> reverseList(List<String> strings){
-		return null;
+		return IntStream.range(0, strings.size())
+				.boxed()
+				.sorted(Collections.reverseOrder())
+				.map(i -> strings.get(i))
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -84,7 +105,7 @@ public class CollectionManager {
 	 * @return
 	 */
 	public boolean listContainsDuplicates(List<String> strings){
-		return false;
+		return strings.stream().count() != strings.stream().distinct().count();
 	}
 	
 	/**
@@ -93,7 +114,9 @@ public class CollectionManager {
 	 * @return
 	 */
 	public Collection<String> removeDuplicates(List<String> strings){
-		return null;
+		return strings.stream()
+				.distinct()
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -103,7 +126,10 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> getFirstElements(List<String> strings, int numberOfElements){
-		return null;
+		return IntStream.range(0, numberOfElements)
+				.boxed()
+				.map(i -> strings.get(i))
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -113,7 +139,10 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> getLastElements(List<String> strings, int numberOfElements){
-		return null;
+		return IntStream.range(strings.size()-numberOfElements, strings.size())
+				.boxed()
+				.map(i -> strings.get(i))
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -123,7 +152,9 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> extractElementsMatchingPattern(List<String> strings, String pattern){
-		return null;
+		return strings.stream()
+				.filter(str -> str.matches(pattern))
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -133,7 +164,10 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<String> extractValidEmailAddresses(List<String> strings){
-		return null;
+		return strings.stream()
+//				.filter(str -> str.matches("^[a-zA-Z0-9_]{1,}@[a-zA-Z0-9]{1,}\\.[a-zA-Z0-9]{1,}$"))
+				.filter(str -> str.matches("^[a-zA-Z0-9_]{1,}@[a-zA-Z0-9]{1,}\\.[a-zA-Z]{1,}$"))
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -147,7 +181,8 @@ public class CollectionManager {
 	 * @return
 	 */
 	public String pickStringAtIndex(List<String> strings, int index){
-		return null;
+		//[a,b,c] @ position -1 becomes [c,b,a] @ position 0
+		return (index >= 0) ? strings.get(index % strings.size()) : pickStringAtIndex(reverseList(strings), (index*-1)-1);					
 	}
 	
 	/**
@@ -158,8 +193,25 @@ public class CollectionManager {
 	 * @return
 	 */
 	public List<List<Integer>> findSequences(List<Integer> integers){
-		return null;
-	}	
+		//comments using example [1,2,50,101,102]
+		return IntStream.range(0,integers.size()) //[0,1,2,3,4]
+				.boxed() //(0,1,2,3,4)
+				.filter(i -> i ==0 || integers.get(i)-integers.get(i-1) != 1)	//find where the sequence breaks	[1,50,101]		
+				.map(i -> integers.subList(i, integers.size())) //create new sequences from breaking points to the end of the list [[1,2,50,101,102],[50,101,102],[101,102]]
+				.map(sublist -> { //first example is [1,2,50,101,102]
+					return IntStream.range(0,sublist.size()) //[0,1,2,3,4]
+							.boxed() //(0,1,2,3,4)
+							.filter(i -> i ==0 || sublist.get(i)-sublist.get(i-1) != 1)			//find where the sequence breaks [1,50,101]
+							.map(i -> (i == 0 && evenlySpaced(sublist)) ? sublist : sublist.subList(0, i)) //create new sequences from 0 to breaking points [],[1,2],[1,2,50]
+							.filter(i -> i.size() > 0)				//don't care about empty sub sequences		 [1,2],[1,2,50]		
+							.collect(Collectors.toList());				//([1,2],[1,2,50])			
+				})
+				.filter(i -> i.size() > 0) // don't care about empty sequences //([[1,2],[1,2,50]],[[50],[50,101,102]],[[101,102]])
+				.map(i -> i.get(0)) //get the first entry of each sub sequence list (ie 0 to the first breaking point) [1,2],[50],[101,102]
+				.collect(Collectors.toList());				
+	}
+	
+	
 	
 	/**
 	 * Encountering an exception can happen often when working with collections
@@ -170,7 +222,13 @@ public class CollectionManager {
 	 * @return
 	 */
 	public IndexOutOfBoundsException forceIndexOutOfBoundsException(){
-		return null;
+		IndexOutOfBoundsException e = null;
+		try{
+			Arrays.asList("dog","ball","hat").get(9000);
+		}catch(IndexOutOfBoundsException ioobe){
+			e = ioobe;
+		}
+		return e;
 	}
 	
 	/**
@@ -182,7 +240,13 @@ public class CollectionManager {
 	 * @return
 	 */
 	public UnsupportedOperationException forceUnsupportedOperationException(){		
-		return null;
+		UnsupportedOperationException e = null;
+		try{
+			Arrays.asList("dog","ball","hat").add("lady");
+		}catch(UnsupportedOperationException uoe){
+			e = uoe;
+		}
+		return e;
 	}
 	
 	/**
@@ -191,7 +255,14 @@ public class CollectionManager {
 	 * @return
 	 */
 	public String getMostFrequentWord(List<String> words){
-		return null;
+		return words.stream()
+				.collect(Collectors.groupingBy(Function.identity(),Collectors.counting())) //map input to count
+				.entrySet()
+				.stream()
+				.sorted((a,b) -> b.getValue().compareTo(a.getValue())) //sort by counts descending
+				.map(es -> es.getKey()) //just take the keys
+				.collect(Collectors.toList())
+				.get(0);
 	}
 	
 	/**
@@ -200,7 +271,14 @@ public class CollectionManager {
 	 * @return
 	 */
 	public String getLeastFrequentWord(List<String> words){
-		return null;
+		return words.stream()
+				.collect(Collectors.groupingBy(Function.identity(),Collectors.counting())) //map input to count
+				.entrySet()
+				.stream()
+				.sorted((a,b) -> a.getValue().compareTo(b.getValue())) //sort by counts ascending
+				.map(es -> es.getKey()) //just take the keys
+				.collect(Collectors.toList())
+				.get(0);
 	}
 	
 	/**
@@ -208,8 +286,11 @@ public class CollectionManager {
 	 * @param numbers
 	 * @return
 	 */
-	public boolean evenlySpaced(List<Integer> numbers){
-		return false;
+	public boolean evenlySpaced(List<Integer> numbers){		
+		return (numbers.size() <= 2
+				|| numbers.get(1)-numbers.get(0) == numbers.get(2)-numbers.get(1)
+				&& evenlySpaced(numbers.subList(1, numbers.size())));
+
 	}
 	
 	/**
@@ -221,8 +302,15 @@ public class CollectionManager {
 	 * @return
 	 */
 	public boolean splitCanBalance(List<Integer> numbers){
-		return false;
-	}	
+		return IntStream.range(0, numbers.size()-1)
+				.boxed()
+				.anyMatch((i) -> {
+					int lhs = numbers.subList(0, i+1).stream().mapToInt(j->j.intValue()).sum();
+					int rhs = numbers.subList(i+1, numbers.size()).stream().mapToInt(j->j.intValue()).sum();
+					return ( lhs == rhs );
+				});
+	}
+	
 	
 
 }

@@ -1,19 +1,22 @@
 package shane.nolan.wit;
 
 import java.text.ParseException;
-
+import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class StringManager {
 	
 	public StringManager(){}
 	
-		/**
+	/**
 	 * Given a string, return the same string but without the vowels
 	 * @param str
 	 * @return
 	 */
 	public String removeVowels(String str){
-		return null;
+		return str.replaceAll("[aeiouAEIOU]", "");
 	}
 	
 	/**
@@ -22,7 +25,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String removeConsonants(String str){
-		return null;
+		return str.replaceAll("[^aeiouAEIOU]", "");
 	}
 	
 	/**
@@ -31,7 +34,7 @@ public class StringManager {
 	 * @return
 	 */
 	public char getFirstCharacter(String str){		
-		return '#';
+		return str.charAt(0);
 	}
 	
 	/**
@@ -40,7 +43,7 @@ public class StringManager {
 	 * @return
 	 */
 	public char getLastCharacter(String str){
-		return '#';
+		return str.charAt(str.length()-1);
 	}
 	
 	/**
@@ -49,7 +52,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean containsNumbers(String str){
-		return false;
+		return str.matches("^.+?[0-9].+$");
 	}
 	
 	/**
@@ -58,7 +61,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String removeNumbers(String str){
-		return null;
+		return str.replaceAll("[0-9]","");
 	}
 	
 	/**
@@ -67,7 +70,7 @@ public class StringManager {
 	 * @return
 	 */
 	public int countCharacters(String str){
-		return -1;
+		return str.length();
 	}
 	
 	/**
@@ -76,7 +79,7 @@ public class StringManager {
 	 * @return
 	 */
 	public String reverseString(String str){
-		return null;
+		return new StringBuilder(str).reverse().toString();
 	}
 	
 	/**
@@ -85,7 +88,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean isPalindrome(String str){
-		return false;
+		return str.equals(reverseString(str));
 	}	
 	
 	/**
@@ -96,7 +99,11 @@ public class StringManager {
 	 * @return
 	 */
 	public String[] duplicate(String str, int numberOfDuplicates){
-		return null;
+		return IntStream.rangeClosed(1, numberOfDuplicates)
+				.boxed()
+				.map(i -> str)
+				.collect(Collectors.toList())
+				.toArray(new String[numberOfDuplicates]);
 	}
 	
 	/**
@@ -107,7 +114,7 @@ public class StringManager {
 	 * @return
 	 */
 	public boolean stringsAreEqual(String a, String b){
-		return false;
+		return a.equalsIgnoreCase(b);
 	}
 	
 	/**
@@ -118,7 +125,12 @@ public class StringManager {
 	 * @return
 	 */
 	public int countStartsWith(String sentence, String s, boolean caseSensitive){
-		return 0;
+		return new Long(Stream.of(sentence.split(" "))
+				.filter((i) -> {
+					return caseSensitive ? i.startsWith(s) : i.toLowerCase().startsWith(s.toLowerCase());
+				})
+				.count())
+				.intValue();
 	}
 	
 	/**
@@ -129,7 +141,12 @@ public class StringManager {
 	 * @return
 	 */
 	public int countEndsWith(String sentence, String s, boolean caseSensitive){
-		return 0;
+		return new Long(Stream.of(sentence.split(" "))
+				.filter((i) -> {
+					return caseSensitive ? i.endsWith(s) : i.toLowerCase().endsWith(s.toLowerCase());
+				})
+				.count())
+				.intValue();
 	}
 	
 	/**
@@ -139,9 +156,13 @@ public class StringManager {
 	 * @return
 	 */
 	public int addLetterValues(String str){
-		return 0;
+		//need to add a throws ScriptException but could use the following
+		//return (int) new ScriptEngineManager().getEngineByName("JavaScript").eval(String.join("+",str.split("")));
+		return new Long(Stream.of(str.split(""))
+				.mapToInt(s -> Integer.parseInt(s))
+				.sum())
+				.intValue();
 	}
-	
 	
 	/**
 	 * Given a date in the format: Year-Month-Day Hour:Minute:Second
@@ -154,7 +175,9 @@ public class StringManager {
 	 * @throws ParseException
 	 */
 	public String reformatDateString(String dateString) throws ParseException {
-		return null;
+		return new SimpleDateFormat("dd-MM-yyyy h:mm a")
+				.format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.parse(dateString));
 	}
 
 }
